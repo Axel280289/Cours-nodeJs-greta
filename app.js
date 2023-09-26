@@ -1,5 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
+const morgan = require('morgan');
 dotenv.config();
 
 
@@ -7,10 +8,19 @@ dotenv.config();
 
 const app = express();
 
-app.use((req, res, next) => {  
-    console.log(new Date().toLocaleDateString())
+app.use('/images', express.static(`${__dirname}/Public/images`)); // pour configurer les fichiers statiques, a mettre avant la route
+app.use('/styles', express.static(`${__dirname}/Public/styles/`)); 
+
+app.use((req, res, next) => {    // a placer avant la route
+    console.log(new Date().toLocaleDateString()) 
     next();
         })
+
+app.use(morgan('dev')); // mettre avant la route
+
+
+//------------
+// la route
 
 app.get('/', (req, res) => {
         res.status(200).sendFile(`${__dirname}/index.html`);
