@@ -1,43 +1,39 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const morgan = require('morgan');
+const express = require("express");
+const dotenv = require("dotenv");
+const morgan = require("morgan");
+const app = express();
+const mongoose = require("mongoose");
+
 dotenv.config();
 
+const homeRoutes = require("./routes/home");
+const contactRoutes = require("./routes/contact");
+const errorRoutes = require("./routes/error");
 
+app.use(express.json());
 
+mongoose
+  .connect(process.env.URL_DATABASE)
+  .then(() => console.log("Connexion à MongoDB réussie !"))
+  .catch((error) => console.log(`${error}`));
 
-const app = express();
+app.use("/images", express.static(`${__dirname}/Public/images`)); // pour configurer les fichiers statiques, a mettre avant la route
+app.use("/styles", express.static(`${__dirname}/Public/styles/`));
 
-app.use('/images', express.static(`${__dirname}/Public/images`)); // pour configurer les fichiers statiques, a mettre avant la route
-app.use('/styles', express.static(`${__dirname}/Public/styles/`)); 
+app.use((req, res, next) => {
+  // a placer avant la route
+  console.log(new Date().toLocaleDateString());
+  next();
+});
 
-app.use((req, res, next) => {    // a placer avant la route
-    console.log(new Date().toLocaleDateString()) 
-    next();
-        })
+app.use(morgan("dev")); // mettre avant la route
 
-app.use(morgan('dev')); // mettre avant la route
-
-
-//------------
+app.use(homeRoutes);
+app.use(contactRoutes);
+app.use(errorRoutes);
 // la route
 
-app.get('/', (req, res) => {
-        res.status(200).sendFile(`${__dirname}/index.html`);
-        })
-
-app.get('/contact', (req, res) => {
-        res.status(200).sendFile(`${__dirname}/pages/contact.html`);
-        })
-
-app.use((req, res) => {
-         res.status(404).sendFile(`${__dirname}/pages/error.html`)
-        })
-
-
-
-
-app.listen((process.env.PORT || 3000), () => {
-    console.log(`Le serveur est disponible à l'adresse :
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Le serveur est disponible à l'adresse :
     http://${process.env.HOST}:${process.env.PORT ? process.env.PORT : 3000}`);
-    })
+});
