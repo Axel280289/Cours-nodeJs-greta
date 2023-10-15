@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +7,12 @@
     <title>Document</title>
 </head>
 <body>
-    <%- include('./views/components/header.ejs') %>
-    <h1>Accueil</h1>
-
-    <% if(isConnected) { %>
-        <p><%= userConnected %></p>
-    <% } %>
+    <%- include('../components/header.ejs') %>
+    <h1>Déconnexion</h1>
+    <form action="/logout/disconnect" method="POST">
+        <a href="/">Annuler</a>
+        <button>Confirmer</button>
+    </form>
     
-    <img src="/images/paysage.jpg" alt="">
 </body>
 </html>
